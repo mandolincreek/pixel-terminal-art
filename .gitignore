@@ -1,0 +1,12 @@
+# editor/backup files
+*~
+*.swp
+*.bak
+
+# patch files
+*.orig
+*.rej
+
+# objects and binaries
+*.o
+pixel
