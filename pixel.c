@@ -12,20 +12,20 @@ bug: sometimes, the color gets messed up and turns into hexadecimal
 other bug: current prn is not being displayed
 */
 
-typedef struct {
+struct User {
 	int y, x, prev_y, prev_x, color;
 	char moveArrow, pen;
-} User;
+};
 
-typedef struct {
+struct WindowInfo {
 	int max_y, max_x;
 	bool drawing, erasing;
 	char pen, color;
-} WindowInfo;
+};
 
-typedef struct {
+struct Pixel {
 	char letter, color;
-} Pixel;
+};
 
 void debug(const char* msg) {
 	FILE *file = fopen("log.txt", "a");
@@ -53,7 +53,7 @@ void makeSquare(FILE* file, short x, short y, char color) {
 		"fill=\"%s\" stroke-width=\"0\"/>\n", x, y * 2, strColor, strColor);
 }
 
-void displayInfo(WindowInfo wInfo) {
+void displayInfo(struct WindowInfo wInfo) {
 	for (int x = 1; x < wInfo.max_x / 10; x++)
 		mvprintw(wInfo.max_y - 4, x, "_");
 	for (int y = 3; y >= 1; y--)
@@ -105,7 +105,7 @@ void displayEraser(int max_x, int max_y) {
 	mvprintw(max_y - 2, ((max_x / 10) + ((max_x / 10) * 1.6)) / 2, " Eraser ");
 }
 
-bool updateEraserStatus(User user, int max_x, int max_y, bool erasing) {
+bool updateEraserStatus(struct User user, int max_x, int max_y, bool erasing) {
 	MEVENT mouseClick;
 	if (getmouse(&mouseClick) == OK) {
 		for (int y = max_y - 3; y < max_y; y++) {
@@ -137,20 +137,20 @@ int main() {
 	
 	int MAX_Y, MAX_X;
 	getmaxyx(stdscr, MAX_Y, MAX_X);
-	Pixel drawingBoard[MAX_Y][MAX_X];
+	struct Pixel drawingBoard[MAX_Y][MAX_X];
 
 	box(stdscr, '|', '_');
 
 	for (int y = 0; y < MAX_Y; y++) {
 		for (int x = 0; x < MAX_X; x++) {
-			Pixel p = {'\0', 0};
+			struct Pixel p = {'\0', 0};
 			drawingBoard[y][x] = p;
 		}
 	}
 
 	bool usingApp = true, drawing = false, erasing = false;
-	User user = {MAX_Y / 10, MAX_X / 10, MAX_Y / 10, MAX_X / 10, 0, ',', '*'};
-	WindowInfo wInfo = {MAX_Y, MAX_X, drawing, erasing, user.pen, 0};
+	struct User user = {MAX_Y / 10, MAX_X / 10, MAX_Y / 10, MAX_X / 10, 0, ',', '*'};
+	struct WindowInfo wInfo = {MAX_Y, MAX_X, drawing, erasing, user.pen, 0};
 
 	bool makeNewPen = false, dithering = false;
 
@@ -210,7 +210,7 @@ int main() {
 				FILE* outFile = fopen("Out/output.txt", "a");
 				for (int y = 0; y < MAX_Y; y++) {
 					for (int x = 0; x < MAX_X; x++) {
-						Pixel p = drawingBoard[y][x];
+						struct Pixel p = drawingBoard[y][x];
 					char buf[20];
 					sprintf(buf, "\033[48;5;%dm \033[0m", p.color);
 					p.letter == 0 ? fputs(" ", outFile) : fputs(buf, outFile);
@@ -230,7 +230,7 @@ int main() {
 
 				for (int y = 0; y < MAX_Y; y++) {
 					for (int x = 0; x < MAX_X; x++) {
-						Pixel pixel = drawingBoard[y][x];
+						struct Pixel pixel = drawingBoard[y][x];
 						if (pixel.letter == '\0')
 							continue;
 						makeSquare(svgFile, x, y, pixel.color);
@@ -263,14 +263,14 @@ int main() {
 			user.x = MAX_X - 1;
 
 		if (drawing) {
-			Pixel p = {user.pen, user.color};
+			struct Pixel p = {user.pen, user.color};
 			if (!dithering || ((user.x + user.y + user.color) % 2))
 				drawingBoard[user.y][user.x] = p;
 		}
 
 		else {
 			if (erasing) {
-				Pixel p = {'Z', 0};
+				struct Pixel p = {'Z', 0};
 				drawingBoard[user.y][user.x] = p;
 			}
 
@@ -281,7 +281,7 @@ int main() {
 
 		for (int y = 0; y < MAX_Y; y++) {
 			for (int x = 0; x < MAX_X; x++) {
-				Pixel p = drawingBoard[y][x];
+				struct Pixel p = drawingBoard[y][x];
 				attron(COLOR_PAIR(p.color));
 				const char terminated[2] = {p.letter, '\0'};
 				mvprintw(y, x, terminated);
