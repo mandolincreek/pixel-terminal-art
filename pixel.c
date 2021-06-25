@@ -1,4 +1,6 @@
 #include <curses.h>
+#include <stdlib.h>
+#include <string.h>
 
 /*
 q - quit
@@ -18,6 +20,7 @@ struct User {
 };
 
 struct WindowInfo {
+	struct Pixel *board;
 	int max_y, max_x;
 	bool drawing, erasing;
 	char pen, color;
@@ -26,6 +29,13 @@ struct WindowInfo {
 struct Pixel {
 	char letter, color;
 };
+
+static struct Pixel *get_pixel(struct WindowInfo *w, int x, int y) {
+	return w->board + y * w->max_x + x;
+}
+static void set_pixel(struct WindowInfo *w, int x, int y, struct Pixel *p) {
+	memcpy(get_pixel(w, x, y), p, sizeof(*p));
+}
 
 void debug(const char* msg) {
 	FILE *file = fopen("log.txt", "a");
@@ -156,20 +166,18 @@ int main() {
 	
 	int MAX_Y, MAX_X;
 	getmaxyx(stdscr, MAX_Y, MAX_X);
-	struct Pixel drawingBoard[MAX_Y][MAX_X];
+	size_t n_squares = MAX_Y * MAX_X;
+	struct Pixel *board = malloc(sizeof(*board) * n_squares);
+	if (board == NULL)
+		return 1;
+
+	memset(board, 0, n_squares * sizeof(*board));
 
 	box(stdscr, '|', '_');
 
-	for (int y = 0; y < MAX_Y; y++) {
-		for (int x = 0; x < MAX_X; x++) {
-			struct Pixel p = {'\0', 0};
-			drawingBoard[y][x] = p;
-		}
-	}
-
 	bool usingApp = true, drawing = false, erasing = false;
 	struct User user = {MAX_Y / 10, MAX_X / 10, MAX_Y / 10, MAX_X / 10, 0, ',', '*'};
-	struct WindowInfo wInfo = {MAX_Y, MAX_X, drawing, erasing, user.pen, 0};
+	struct WindowInfo wInfo = {board, MAX_Y, MAX_X, drawing, erasing, user.pen, 0};
 
 	bool makeNewPen = false;
 	int dithering = 0;
@@ -214,10 +222,10 @@ int main() {
 				FILE* outFile = fopen("Out/output.txt", "a");
 				for (int y = 0; y < MAX_Y; y++) {
 					for (int x = 0; x < MAX_X; x++) {
-						struct Pixel p = drawingBoard[y][x];
+						struct Pixel *p = get_pixel(&wInfo, x, y);
 					char buf[20];
-					sprintf(buf, "\033[48;5;%dm \033[0m", p.color);
-					p.letter == 0 ? fputs(" ", outFile) : fputs(buf, outFile);
+					sprintf(buf, "\033[48;5;%dm \033[0m", p->color);
+					p->letter == 0 ? fputs(" ", outFile) : fputs(buf, outFile);
 				    }
 				    fputs("\n", outFile);
 				}
@@ -234,10 +242,11 @@ int main() {
 
 				for (int y = 0; y < MAX_Y; y++) {
 					for (int x = 0; x < MAX_X; x++) {
-						struct Pixel pixel = drawingBoard[y][x];
-						if (pixel.letter == '\0')
+						struct Pixel *pixel;
+						pixel = get_pixel(&wInfo, x, y);
+						if (pixel->letter == '\0')
 							continue;
-						makeSquare(svgFile, x, y, pixel.color);
+						makeSquare(svgFile, x, y, pixel->color);
 					}
 				}
 				fputs("\n</svg>\n", svgFile);
@@ -269,13 +278,13 @@ int main() {
 		if (drawing) {
 			struct Pixel p = {user.pen, user.color};
 			if (!dithering || ((user.x + user.y + dithering) % 2))
-				drawingBoard[user.y][user.x] = p;
+				set_pixel(&wInfo, user.x, user.y, &p);
 		}
 
 		else {
 			if (erasing) {
 				struct Pixel p = {'Z', 0};
-				drawingBoard[user.y][user.x] = p;
+				set_pixel(&wInfo, user.x, user.y, &p);
 			}
 
 			mvprintw(user.y, user.x, &user.moveArrow);
@@ -285,11 +294,11 @@ int main() {
 
 		for (int y = 0; y < MAX_Y; y++) {
 			for (int x = 0; x < MAX_X; x++) {
-				struct Pixel p = drawingBoard[y][x];
-				attron(COLOR_PAIR(p.color));
-				const char terminated[2] = {p.letter, '\0'};
+				struct Pixel *p = get_pixel(&wInfo, x, y);
+				attron(COLOR_PAIR(p->color));
+				const char terminated[2] = {p->letter, '\0'};
 				mvprintw(y, x, terminated);
-				attroff(COLOR_PAIR(p.color));
+				attroff(COLOR_PAIR(p->color));
 			}
 		}
 
@@ -306,5 +315,6 @@ int main() {
 		napms(10);
 	}
 	endwin();
+	free(board);
 	return 0;
 }
