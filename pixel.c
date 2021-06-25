@@ -43,24 +43,16 @@ void debug(const char* msg) {
 	fclose(file);
 }
 
-#define ASSIGN_COLOR(color) strColor = color; break;
-
-void makeSquare(FILE* file, short x, short y, char color) {
-	char* strColor;
-	switch (color) {
-		case 0: ASSIGN_COLOR("darkgrey");
-		case 1: ASSIGN_COLOR("red");
-		case 2: ASSIGN_COLOR("green");
-		case 3: ASSIGN_COLOR("yellow");
-		case 4: ASSIGN_COLOR("blue");
-		case 5: ASSIGN_COLOR("purple");
-		case 6: ASSIGN_COLOR("cyan");
-		case 7: ASSIGN_COLOR("gray");
-		case 8: ASSIGN_COLOR("black");
-	}
-
-	fprintf(file, "<rect x=\"%d\" y=\"%d\" width=\"1\" height=\"2\" stroke=\"%s\"\n"
-		"fill=\"%s\" stroke-width=\"0\"/>\n", x, y * 2, strColor, strColor);
+void makeSquare(FILE* file, short x, short y, int color)
+{
+	const char *colors[] = {
+			"darkgrey", "red", "green", "yellow", "blue",
+			"purple", "cyan", "gray", "black",
+		};
+	const char *cstr = colors[color];
+	fprintf(file, "\t<rect x=\"%d\" y=\"%d\" width=\"1\" height=\"2\" "
+		"stroke=\"%s\"\n\tfill=\"%s\" stroke-width=\"0\"/>\n",
+		x, y * 2, cstr, cstr);
 }
 
 void displayInfo(struct WindowInfo wInfo) {
