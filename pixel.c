@@ -168,7 +168,8 @@ int main() {
 		if (erasing)
 			drawing = false;
 
-		switch (getch()) {
+		int ch = getch();
+		switch (ch) {
 			case 'q':
 				usingApp = false; break;
 			case 'w':
