@@ -171,7 +171,8 @@ int main() {
 	struct User user = {MAX_Y / 10, MAX_X / 10, MAX_Y / 10, MAX_X / 10, 0, ',', '*'};
 	struct WindowInfo wInfo = {MAX_Y, MAX_X, drawing, erasing, user.pen, 0};
 
-	bool makeNewPen = false, dithering = false;
+	bool makeNewPen = false;
+	int dithering = 0;
 
 	while (usingApp) {
 		user.prev_y = user.y;
@@ -200,7 +201,8 @@ int main() {
 			case 'p':
 				makeNewPen = true; break;
 			case 'd':
-				dithering = !dithering; break;
+				dithering = (dithering + 1) % 3;
+				continue;
 			case KEY_MOUSE:
 				if (mouseClicked(&user, &wInfo))
 					drawing = false;
@@ -266,7 +268,7 @@ int main() {
 
 		if (drawing) {
 			struct Pixel p = {user.pen, user.color};
-			if (!dithering || ((user.x + user.y + user.color) % 2))
+			if (!dithering || ((user.x + user.y + dithering) % 2))
 				drawingBoard[user.y][user.x] = p;
 		}
 
