@@ -150,7 +150,7 @@ int main() {
 
 	bool usingApp = true, drawing = false, erasing = false;
 	User user = {MAX_Y / 10, MAX_X / 10, MAX_Y / 10, MAX_X / 10, 0, ',', '*'};
-	WindowInfo wInfo = {MAX_Y, MAX_X, drawing, erasing, user.pen};
+	WindowInfo wInfo = {MAX_Y, MAX_X, drawing, erasing, user.pen, 0};
 
 	bool makeNewPen = false, dithering = false;
 
