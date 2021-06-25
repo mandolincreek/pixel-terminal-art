@@ -1,3 +1,12 @@
+/* pixel.c: a terminal art project
+
+   Copyright (c) 2021 by:
+     Caspian Ahlberg <caspianahlberg@gmail.com>
+     Zachary T Welch <zach@mandolincreek.net>
+
+   SPDX-License-Identifier: GPL-2.0-or-later
+   See the GNU General Public License for details.
+*/
 #include <curses.h>
 #include <stdlib.h>
 #include <string.h>
