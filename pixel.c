@@ -49,8 +49,8 @@ void makeSquare(FILE* file, short x, short y, char color) {
 		case 8: ASSIGN_COLOR("black");
 	}
 
-	fprintf(file, "<rect x=\"%d\" y=\"%d\" width=\"2\" height=\"2\" stroke=\"%s\"\n\
-				fill=\"%s\" stroke-width=\"1\"/>\n", x, y, strColor, strColor);
+	fprintf(file, "<rect x=\"%d\" y=\"%d\" width=\"1\" height=\"2\" stroke=\"%s\"\n"
+		"fill=\"%s\" stroke-width=\"0\"/>\n", x, y * 2, strColor, strColor);
 }
 
 void displayInfo(WindowInfo wInfo) {
@@ -228,7 +228,7 @@ int main() {
 						Pixel pixel = drawingBoard[y][x];
 						if (pixel.letter == '\0')
 							continue;
-						makeSquare(svgFile, x, y * 1.5, pixel.color);
+						makeSquare(svgFile, x, y, pixel.color);
 					}
 				}
 				fputs("\n</svg>\n", svgFile);
