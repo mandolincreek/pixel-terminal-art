@@ -13,12 +13,12 @@ other bug: current prn is not being displayed
 */
 
 typedef struct {
-	unsigned int y, x, prev_y, prev_x, current_color;
+	int y, x, prev_y, prev_x, current_color;
 	char moveArrow, pen;
 } User;
 
 typedef struct {
-	unsigned int max_y, max_x;
+	int max_y, max_x;
 	bool currently_drawing, erasing;
 	char current_pen, current_color;
 } WindowInfo;
