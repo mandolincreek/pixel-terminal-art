@@ -13,14 +13,14 @@ other bug: current prn is not being displayed
 */
 
 typedef struct {
-	int y, x, prev_y, prev_x, current_color;
+	int y, x, prev_y, prev_x, color;
 	char moveArrow, pen;
 } User;
 
 typedef struct {
 	int max_y, max_x;
-	bool currently_drawing, erasing;
-	char current_pen, current_color;
+	bool drawing, erasing;
+	char pen, color;
 } WindowInfo;
 
 typedef struct {
@@ -60,14 +60,14 @@ void displayInfo(WindowInfo wInfo) {
 		mvprintw(wInfo.max_y - y, wInfo.max_x / 10, "|");
 
 	char cursorMsg[5] = "Pen ";
-	cursorMsg[4] = wInfo.current_pen;
+	cursorMsg[4] = wInfo.pen;
 
 	mvprintw(wInfo.max_y - 3, 2, cursorMsg);
 
 	char* msg;
 	if (wInfo.erasing)
 		msg = "Erasing";
-	else if (wInfo.currently_drawing)
+	else if (wInfo.drawing)
 		msg = "Drawing";
 	else
 		msg = "Moving  ";
@@ -75,7 +75,7 @@ void displayInfo(WindowInfo wInfo) {
 	mvprintw(wInfo.max_y - 2, 2, msg);
 
 	char colorMsg[16];
-	sprintf(colorMsg, ", Color %d", wInfo.current_color);
+	sprintf(colorMsg, ", Color %d", wInfo.color);
 	mvprintw(wInfo.max_y - 3, 7, colorMsg);
 
 	int color_ind = 0;
@@ -189,7 +189,7 @@ int main() {
 							colorInd++;
 						for (char colorX = 1; colorX < 7; colorX++) {
 							if (user.y == colorY && user.x == colorX) {
-								user.current_color = colorInd;
+								user.color = colorInd;
 								drawing = false;
 								break;
 							}
@@ -258,8 +258,8 @@ int main() {
 			user.x = MAX_X - 1;
 
 		if (drawing) {
-			Pixel p = {user.pen, user.current_color};
-			if (!dithering || ((user.x + user.y + user.current_color) % 2))
+			Pixel p = {user.pen, user.color};
+			if (!dithering || ((user.x + user.y + user.color) % 2))
 				drawingBoard[user.y][user.x] = p;
 		}
 
@@ -284,10 +284,10 @@ int main() {
 			}
 		}
 
-		wInfo.currently_drawing = drawing;
+		wInfo.drawing = drawing;
 		wInfo.erasing = erasing;
-		wInfo.current_pen = user.pen;
-		wInfo.current_color = user.current_color; // getting messed up
+		wInfo.pen = user.pen;
+		wInfo.color = user.color; // getting messed up
 
 		displayInfo(wInfo);
 		displayEraser(MAX_X, MAX_Y);
