@@ -293,7 +293,7 @@ int main() {
 
 		refresh();
 		flushinp();
-		napms(80);
+		napms(10);
 	}
 	endwin();
 	return 0;
