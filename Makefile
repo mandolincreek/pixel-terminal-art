@@ -10,3 +10,5 @@ pixel: pixel.o
 %.o: %.c
 	$(CC) -c $(CFLAGS) -o $@ $<
 
+clean:
+	rm -f pixel *.o
