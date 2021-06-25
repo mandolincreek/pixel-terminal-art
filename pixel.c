@@ -241,10 +241,10 @@ int main() {
 			case KEY_DOWN:
 				user.y++; break;
 			case KEY_LEFT:
-				if (dithering) user.x -= 2; else user.x--;
+				user.x--;
 				break;
 			case KEY_RIGHT:
-				if (dithering) user.x += 2; else user.x++;
+				user.x++;
 				break;
 		}
 
@@ -259,7 +259,8 @@ int main() {
 
 		if (drawing) {
 			Pixel p = {user.pen, user.current_color};
-			drawingBoard[user.y][user.x] = p;
+			if (!dithering || ((user.x + user.y + user.current_color) % 2))
+				drawingBoard[user.y][user.x] = p;
 		}
 
 		else {
