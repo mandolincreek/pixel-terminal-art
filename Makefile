@@ -1,6 +1,12 @@
 CC = gcc
-CFLAGS = -O3 -Wall -Werror
-LDFLAGS = -lncurses -o bin/pixel
+CFLAGS = -g -Wall -Wextra -Werror -Wno-unused-parameter
+LDFLAGS = -lncurses
 
-all:
-	$(CC) $(CFLAGS) $(LDFLAGS) pixel.c
+all: pixel
+
+pixel: pixel.o
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
+%.o: %.c
+	$(CC) -c $(CFLAGS) -o $@ $<
+
