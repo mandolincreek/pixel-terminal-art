@@ -163,6 +163,34 @@ void exportAsText(struct WindowInfo *wInfo)
 	fclose(out);
 }
 
+void exportAsVector(struct WindowInfo *wInfo)
+{
+	const char *name = "output.svg";
+	FILE* out = fopen(name, "w");
+	if (out == NULL) {
+		fprintf(stderr, "\r%s: unable to create file for writing", name);
+		return;
+	}
+
+	fprintf(out, "<?xml version=\"1.0\" standalone=\"no\"?>\n"
+			"<svg width=\"%d\" height=\"%d\" version=\"1.1\"\n"
+			"xmlns=\"http://www.w3.org/2000/svg\">\n\n",
+			wInfo->max_x, wInfo->max_y * 2);
+
+	for (int y = 0; y < wInfo->max_y; y++) {
+		for (int x = 0; x < wInfo->max_x; x++) {
+			struct Pixel *pixel;
+			pixel = get_pixel(wInfo, x, y);
+			if (pixel->letter == '\0')
+				continue;
+			makeSquare(out, x, y, pixel->color);
+		}
+		fputs("\n", out);
+	}
+	fputs("\n</svg>\n", out);
+
+	fclose(out);
+}
 
 // add a "fill" option
 
@@ -235,26 +263,9 @@ int main() {
 				exportAsText(&wInfo);
 				continue;
 
-			case 'v': {
-				fclose(fopen("Out/output.svg", "w"));
-				FILE* svgFile = fopen("Out/output.svg", "a");
-				fprintf(svgFile, "<?xml version=\"1.0\" standalone=\"no\"?>\n\
-				<svg width=\"%d\" height=\"%d\" version=\"1.1\"\n\
-				xmlns=\"http://www.w3.org/2000/svg\">\n\n", MAX_X, MAX_Y * 2);
-
-				for (int y = 0; y < MAX_Y; y++) {
-					for (int x = 0; x < MAX_X; x++) {
-						struct Pixel *pixel;
-						pixel = get_pixel(&wInfo, x, y);
-						if (pixel->letter == '\0')
-							continue;
-						makeSquare(svgFile, x, y, pixel->color);
-					}
-				}
-				fputs("\n</svg>\n", svgFile);
-				fclose(svgFile);
-				break;
-			}
+			case 'v':
+				exportAsVector(&wInfo);
+				continue;
 
 			case KEY_UP:
 				user.y--; break;
