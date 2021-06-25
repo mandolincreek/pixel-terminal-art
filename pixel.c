@@ -74,7 +74,7 @@ void displayInfo(WindowInfo wInfo) {
 
 	mvprintw(wInfo.max_y - 2, 2, msg);
 
-	char colorMsg[10];
+	char colorMsg[16];
 	sprintf(colorMsg, ", Color %d", wInfo.current_color);
 	mvprintw(wInfo.max_y - 3, 7, colorMsg);
 
@@ -207,7 +207,7 @@ int main() {
 				for (int y = 0; y < MAX_Y; y++) {
 					for (int x = 0; x < MAX_X; x++) {
 						Pixel p = drawingBoard[y][x];
-                        char buf[15];
+                        char buf[20];
                         sprintf(buf, "\033[48;5;%dm \033[0m", p.color);
                         p.letter == 0 ? fputs(" ", outFile) : fputs(buf, outFile);
                     }
