@@ -206,14 +206,14 @@ int main() {
 				for (int y = 0; y < MAX_Y; y++) {
 					for (int x = 0; x < MAX_X; x++) {
 						Pixel p = drawingBoard[y][x];
-                        char buf[20];
-                        sprintf(buf, "\033[48;5;%dm \033[0m", p.color);
-                        p.letter == 0 ? fputs(" ", outFile) : fputs(buf, outFile);
-                    }
-                    fputs("\n", outFile);
-                }
-                fclose(outFile);
-                break;
+					char buf[20];
+					sprintf(buf, "\033[48;5;%dm \033[0m", p.color);
+					p.letter == 0 ? fputs(" ", outFile) : fputs(buf, outFile);
+				    }
+				    fputs("\n", outFile);
+				}
+				fclose(outFile);
+				break;
 			}
 
 			case 'v': {
@@ -257,44 +257,43 @@ int main() {
 		else if (user.y > MAX_X)
 			user.x = MAX_X - 1;
 
-	if (drawing) {
-		Pixel p = {user.pen, user.current_color};
-		drawingBoard[user.y][user.x] = p;
-	}
-
-	else {
-		if (erasing) {
-			Pixel p = {'Z', 0};
+		if (drawing) {
+			Pixel p = {user.pen, user.current_color};
 			drawingBoard[user.y][user.x] = p;
 		}
 
-		mvprintw(user.y, user.x, &user.moveArrow);
-		mvprintw(user.y, user.x + 1, " ");
-		mvprintw(user.prev_y, user.prev_x, " ");
-	}
-	
-	for (int y = 0; y < MAX_Y; y++) {
-		for (int x = 0; x < MAX_X; x++) {
-			Pixel p = drawingBoard[y][x];
-			attron(COLOR_PAIR(p.color));
-			const char terminated[2] = {p.letter, '\0'};
-			mvprintw(y, x, terminated);
-			attroff(COLOR_PAIR(p.color));
+		else {
+			if (erasing) {
+				Pixel p = {'Z', 0};
+				drawingBoard[user.y][user.x] = p;
+			}
+
+			mvprintw(user.y, user.x, &user.moveArrow);
+			mvprintw(user.y, user.x + 1, " ");
+			mvprintw(user.prev_y, user.prev_x, " ");
 		}
-	}
 
-	wInfo.currently_drawing = drawing;
-	wInfo.erasing = erasing;
-	wInfo.current_pen = user.pen;
-	wInfo.current_color = user.current_color; // getting messed up
+		for (int y = 0; y < MAX_Y; y++) {
+			for (int x = 0; x < MAX_X; x++) {
+				Pixel p = drawingBoard[y][x];
+				attron(COLOR_PAIR(p.color));
+				const char terminated[2] = {p.letter, '\0'};
+				mvprintw(y, x, terminated);
+				attroff(COLOR_PAIR(p.color));
+			}
+		}
 
-	displayInfo(wInfo);
-	displayEraser(MAX_X, MAX_Y);
+		wInfo.currently_drawing = drawing;
+		wInfo.erasing = erasing;
+		wInfo.current_pen = user.pen;
+		wInfo.current_color = user.current_color; // getting messed up
 
-	refresh();
-	flushinp();
-	napms(80);
+		displayInfo(wInfo);
+		displayEraser(MAX_X, MAX_Y);
 
+		refresh();
+		flushinp();
+		napms(80);
 	}
 	endwin();
 	return 0;
