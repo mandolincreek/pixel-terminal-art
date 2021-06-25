@@ -140,6 +140,29 @@ static bool mouseClicked(struct User *user, struct WindowInfo *wInfo)
 	return false;
 }
 
+void exportAsText(struct WindowInfo *wInfo)
+{
+	const char *name = "output.txt";
+	FILE* out = fopen(name, "w");
+	if (out == NULL) {
+		fprintf(stderr, "\r%s: unable to create file for writing", name);
+		return;
+	}
+
+	for (int y = 0; y < wInfo->max_y; y++) {
+		for (int x = 0; x < wInfo->max_x; x++) {
+			struct Pixel *p = get_pixel(wInfo, x, y);
+			if (p->letter)
+				fprintf(out, "\033[48;5;%dm%c\033[0m",
+					p->color, p->letter);
+			else
+				fputs(" ", out);
+		}
+		fputs("\n", out);
+	}
+	fclose(out);
+}
+
 
 // add a "fill" option
 
@@ -208,22 +231,9 @@ int main() {
 					drawing = false;
 				break;
 
-			case 'e': {
-				fclose(fopen("Out/output.txt", "w"));
-
-				FILE* outFile = fopen("Out/output.txt", "a");
-				for (int y = 0; y < MAX_Y; y++) {
-					for (int x = 0; x < MAX_X; x++) {
-						struct Pixel *p = get_pixel(&wInfo, x, y);
-					char buf[20];
-					sprintf(buf, "\033[48;5;%dm \033[0m", p->color);
-					p->letter == 0 ? fputs(" ", outFile) : fputs(buf, outFile);
-				    }
-				    fputs("\n", outFile);
-				}
-				fclose(outFile);
-				break;
-			}
+			case 'e':
+				exportAsText(&wInfo);
+				continue;
 
 			case 'v': {
 				fclose(fopen("Out/output.svg", "w"));
