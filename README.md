@@ -23,17 +23,16 @@ Drawings may be saved in multiple formats:
 The `pixel` program responds to the following hard-coded key bindings:
 
 |Key|Function|
-|`up`, `down`, `left`, `right`: move the cursor around the drawing area
-|`w`|toggles navigation/drawing mode
-|`p`|selects a new character to use for the pen
-|`0`|switches to "pen" drawing model
-|`1` through `8`|switches to "color" drawing mode and selects the color to use
-
-|'d'|toggles dither mode (0=off, 1=odd, 2=even).  |
-|'e'|export drawing to `output.txt`
-|'v'|export drawing to `output.svg`
-
-|`q`
+|----|----|
+|`up`, `down`, `left`, `right`|move the cursor around the drawing area|
+|`w`|toggles navigation/drawing mode|
+|`p`|selects a new character to use for the pen|
+|`0`|switches to "pen" drawing model|
+|`1` through `8`|switches to "color" drawing mode and selects the color to use|
+|'d'|toggles dither mode (0=off, 1=odd, 2=even)|
+|'e'|export drawing to `output.txt`|
+|'v'|export drawing to `output.svg`|
+|`q`|quit the program without saving|
 
 ## Dithering
 
