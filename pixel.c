@@ -119,6 +119,25 @@ bool updateEraserStatus(struct User user, int max_x, int max_y, bool erasing) {
 	return erasing;
 }
 
+static bool mouseClicked(struct User *user, struct WindowInfo *wInfo)
+{
+	MEVENT mouseClick;
+	if (getmouse(&mouseClick) != OK)
+		return false;
+
+	user->y = mouseClick.y;
+	user->x = mouseClick.x;
+
+	int block_x = 7, block_y = wInfo->max_y / 9;
+	for (int color = 0; color < 9; color++) {
+		if ((user->x < block_x) && (user->y < color * block_y)) {
+			user->color = color - 1;
+			return true;
+		}
+	}
+	return false;
+}
+
 
 // add a "fill" option
 
@@ -182,27 +201,10 @@ int main() {
 				makeNewPen = true; break;
 			case 'd':
 				dithering = !dithering; break;
-			case KEY_MOUSE: {
-				MEVENT mouseClick;
-				if (getmouse(&mouseClick) == OK) {
-					user.y = mouseClick.y;
-					user.x = mouseClick.x;
-
-					char colorInd = 0;
-					for (int colorY = 1; colorY < wInfo.max_y - 4; colorY++) {
-						if (colorY % (MAX_Y / 9) == 0)
-							colorInd++;
-						for (char colorX = 1; colorX < 7; colorX++) {
-							if (user.y == colorY && user.x == colorX) {
-								user.color = colorInd;
-								drawing = false;
-								break;
-							}
-						}
-					}
-				}
+			case KEY_MOUSE:
+				if (mouseClicked(&user, &wInfo))
+					drawing = false;
 				break;
-			}
 
 			case 'e': {
 				fclose(fopen("Out/output.txt", "w"));
