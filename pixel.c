@@ -169,7 +169,11 @@ int main() {
 			drawing = false;
 
 		int ch = getch();
-		switch (ch) {
+		if (ch >= '0' && ch <= '9') {
+			user.color = ch - '0';
+			continue;
+		}
+		else switch (ch) {
 			case 'q':
 				usingApp = false; break;
 			case 'w':
