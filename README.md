@@ -7,14 +7,14 @@ pixels include both glyph and color information.
 
 Drawings may be saved in multiple formats:
 * text: reproduces faithfully using `cat` or `less -r` on modern color terminals
-* SVG: produces a rectange for each pixel, with a 2:1 aspect ratio
+* SVG: produces a rectangle for each pixel, with a 2:1 aspect ratio
 
 ## Quick Start
 
 * After starting the app, click anywhere to begin.
 * Type 'q' to quit anytime.
 * Click on the screen to move the mouse cursor (',').
-* Click on a color on the lefthand side to select it (or press the number key)
+* Click on a color from the left column to select it (or press a number key)
 * Switch to drawing mode (see key bindings)
 * Click and drag to draw freestyle lines
 
@@ -43,4 +43,4 @@ its properties meet the criteria determined by the current dithering mode.
 For `odd` and `even` dithering, the sum of the pixel coordinates (`x + y`)
 determines the mask, creating two overlapping checkerboard patterns.
 Thus, you can blend two colors by drawing in an area using `odd`
-dithering for the first color and `even` ditering for the second.
+dithering for the first color and `even` dithering for the second.
