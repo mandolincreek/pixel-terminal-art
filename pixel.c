@@ -155,7 +155,6 @@ int main() {
 	bool makeNewPen = false, dithering = false;
 
 	while (usingApp) {
-		printf("Using\n");
 		user.prev_y = user.y;
 		user.prev_x = user.x;
 
